@@ -1,4 +1,4 @@
- # import pygame library
+# import pygame library
 import pygame
 
 # initialise the pygame font system
@@ -27,7 +27,8 @@ grid =[
 		[0, 7, 0, 3, 0, 0, 0, 1, 2],
 		[1, 2, 0, 0, 0, 7, 4, 0, 0],                                                                                                                                                                   
 		[0, 4, 9, 2, 0, 6, 0, 0, 7]
-	]                                               
+	]                                 
+default_grid=grid
 
 # Load test fonts size for future use
 font1 = pygame.font.SysFont("cambriacambriamath", 40)   #for numbers in cells
@@ -127,14 +128,14 @@ def solve(grid, i, j):
 				grid[i][j]= 0   #backtracking
 			# white color background\
 			screen.fill((255, 255, 255))
-		
+			#create another function to refresh with argument(time)
 			draw()
 			draw_box()
 			pygame.display.update()
 			pygame.time.delay(50) 
 	return False
 
-# Display instruction for the game
+# Display instruction for the game; change later
 def instruction():
 	text1 = font2.render("PRESS D TO RESET TO DEFAULT / R TO EMPTY\n", 1, (0, 0, 0))
 	text2 = font2.render("ENTER VALUES AND PRESS ENTER TO VISUALIZE\n", 1, (0, 0, 0))
@@ -146,25 +147,25 @@ def result():
 	text1 = font1.render("FINISHED PRESS R or D\n", 1, (0, 0, 0))
 	screen.blit(text1, (20, 570)) 
 run = True
-flag1 = 0
-flag2 = 0
-rs = 0
-error = 0
+flag1 = 0  #set to 1 when there’s active interaction with a cell and reset to 0 after the interaction is processed
+flag2 = 0  #controls whether the program should attempt to solve the Sudoku puzzle using the backtracking algorithm
+rs = 0     #acts as an indicator of whether the puzzle has been solved
+error = 0  #used to track if there was an invalid action
 # The loop thats keep the window running
 while run:
 	
 	# White color background
 	screen.fill((255, 255, 255))
 	# Loop through the events stored in event.get()
-	for event in pygame.event.get():
+	for event in pygame.event.get():   #pygame.event.get() is a list of all the user-actions
 		# Quit the game window
 		if event.type == pygame.QUIT:
 			run = False
 		# Get the mouse position to insert number 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			flag1 = 1
-			pos = pygame.mouse.get_pos()
-			get_cord(pos)
+			pos = pygame.mouse.get_pos   #function that returns the (x, y) coordinates of the mouse cursor on the screen at the time the function is called
+			get_cord(pos)   #gets cell number based on mouse position
 		# Get the number to be inserted if key pressed 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_LEFT:
@@ -198,44 +199,24 @@ while run:
 			if event.key == pygame.K_9:
 				val = 9
 			if event.key == pygame.K_RETURN:
-				flag2 = 1
+				flag2 = 1   #iindicating triggering of solving function
 			# If R pressed clear the sudoku board
 			if event.key == pygame.K_r:
-				rs = 0
-				error = 0
+				rs = 0   #suggests that a reset or new game action is taking place
+				error = 0   #clears any previous errors
 				flag2 = 0
-				grid =[
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0]
-				]
+				grid = [[0] * 9 for x in range(9)]  #create a sudoku grid of all values=0
 			# If D is pressed reset the board to default 
 			if event.key == pygame.K_d:
 				rs = 0
 				error = 0
 				flag2 = 0
-				grid =[
-					[7, 8, 0, 4, 0, 0, 1, 2, 0],
-					[6, 0, 0, 0, 7, 5, 0, 0, 9],
-					[0, 0, 0, 6, 0, 1, 0, 7, 8],
-					[0, 0, 7, 0, 4, 0, 2, 6, 0],
-					[0, 0, 1, 0, 5, 0, 9, 3, 0],
-					[9, 0, 4, 0, 6, 0, 0, 0, 5],
-					[0, 7, 0, 3, 0, 0, 0, 1, 2],
-					[1, 2, 0, 0, 0, 7, 4, 0, 0],
-					[0, 4, 9, 2, 0, 6, 0, 0, 7]
-				]
-	if flag2 == 1:
+				grid =default_grid
+	if flag2 == 1:   #to check if solving action was triggered
 		if solve(grid, 0, 0)== False:
 			error = 1
 		else:
-			rs = 1
+			rs = 1  #sudoku solved if rs=1
 		flag2 = 0
 	if val != 0:		 
 		draw_val(val)
