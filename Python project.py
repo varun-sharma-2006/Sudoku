@@ -1,21 +1,22 @@
  # import pygame library
 import pygame
 
-# initialise the pygame font
+# initialise the pygame font system
 pygame.font.init()
 
-# Total window dimension
+# Defining pygame window dimensions
 screen = pygame.display.set_mode((650, 750))
 
 # Title and Icon 
-pygame.display.set_caption("SUDOKU SOLVER USING BACKTRACKING")
+pygame.display.set_caption("SUDOKU SOLVER")
 
-
+#x and y are current cell positions
 x = 0
 y = 0
-dif = 500 / 9                                                                                                                                                                      
-val = 0
-# Default Sudoku Board.
+#diff is size of each grid cell
+dif = 500 / 9     #500px is board's total size; will change later and make it even                                                                                                                                                                   
+val = 0   #current value in cell
+# Default Sudoku Board; will import it later and make it user interactive
 grid =[
 		[7, 8, 0, 4, 0, 0, 1, 2, 0],
 		[6, 0, 0, 0, 7, 5, 0, 0, 9],
@@ -29,11 +30,12 @@ grid =[
 	]                                               
 
 # Load test fonts size for future use
-font1 = pygame.font.SysFont("cambriacambriamath", 40)
-font2 = pygame.font.SysFont("cambriacambriamath", 25)
-def get_cord(pos):
+font1 = pygame.font.SysFont("cambriacambriamath", 40)   #for numbers in cells
+font2 = pygame.font.SysFont("cambriacambriamath", 25)   #for instructions and messages
+#Get mouse position
+def get_cord(pos):  #pos is tuple(x,y)
 	global x                                                                                                                               
-	x = pos[0]//dif
+	x = pos[0]//dif  #dividing the mouse position by the size of each cell
 	global y
 	y = pos[1]//dif
 
@@ -56,8 +58,8 @@ def draw():
 
 				# Fill grid with default numbers specified
 				text1 = font1.render(str(grid[i][j]), 1, (0, 0, 0))
-				screen.blit(text1, (i * dif + 15, j * dif + 15))
-	# Draw lines horizontally and verticallyto form grid		 
+				screen.blit(text1, (i * dif + 15, j * dif + 15))  #placing the text on the screen; +15 is used for padding and placing number in the center
+	# Draw lines horizontally and vertically to form grid		 
 	for i in range(10):
 		if i % 3 == 0 :
 			thick = 7
@@ -68,10 +70,10 @@ def draw():
 
 # Fill value entered in cell	 
 def draw_val(val):
-	text1 = font1.render(str(val), 1, (0, 0, 0))
+	text1 = font1.render(str(val), 1, (0, 0, 0))  
 	screen.blit(text1, (x * dif + 15, y * dif + 15)) 
 
-# Raise error when wrong value entered
+# Raise error when wrong value entered; might change later
 def raise_error1():
 	text1 = font1.render("WRONG !!!", 1, (0, 0, 0))
 	screen.blit(text1, (20, 570)) 
@@ -86,6 +88,7 @@ def valid(m, i, j, val):
 			return False
 		if m[it][j]== val:
 			return False
+	#to reach the starting cell of sub-grid
 	it = i//3
 	jt = j//3
 	for i in range(it * 3, it * 3 + 3):
@@ -105,23 +108,23 @@ def solve(grid, i, j):
 			j+= 1 
 		elif i == 8 and j == 8:
 			return True
-	pygame.event.pump() 
+	pygame.event.pump()   #ensures event queue in Pygame is updated so that the game window stays responsive while the backtracking algorithm runs
 	for it in range(1, 10):
 		if valid(grid, i, j, it)== True:
 			grid[i][j]= it
-			global x, y
+			global x, y  #updates the global variables to the current cell coordinates
 			x = i
 			y = j
 			# white color background\
-			screen.fill((255, 255, 255))
-			draw()
-			draw_box()
-			pygame.display.update()
-			pygame.time.delay(20)
-			if solve(grid, i, j)== 1:
+			screen.fill((255, 255, 255))  #Clears the screen by filling it with a white color
+			draw()   #Draws the updated grid on the screen.
+			draw_box()  #Highlights the current cell on the grid (the one being filled)
+			pygame.display.update()  #Updates the display to reflect these changes
+			pygame.time.delay(20)    #dds a slight delay (20 milliseconds) to make the solving process visible to the user
+			if solve(grid, i, j)== 1:   #recursion call
 				return True
 			else:
-				grid[i][j]= 0
+				grid[i][j]= 0   #backtracking
 			# white color background\
 			screen.fill((255, 255, 255))
 		
